@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .result{
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            height: 300px;
+            background-color: rgba(0,0,0,.8);
+            color: white;
+            text-align: center;
+            letter-spacing: 2px;
+            padding-top: 20px;
+            font-size: 18px;
+            line-height: 28px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<button style="display: block;margin: 20px auto;width: 160px;height: 60px;" onclick="getAll()">查询用户</button>
+
+<!-- 输入框 -->
+<input type="text" id="userId" placeholder="请输入用户ID" style="display: block;margin: 20px auto;width: 160px;height: 40px;text-align: center;">
+<button style="display: block;margin: 20px auto;width: 160px;height: 60px;" onclick="getById()">按ID查询用户</button>
+
+<div class="result" id="result"></div>
+
+<script>
+    function getAll(){
+        $.ajax({
+            type: "get",
+            url: "user/selectAll",
+            data: {},
+            success:function (data) {
+                console.log(data)
+                $("#result").empty()
+                for(var i = 0; i < data.length; i++){
+                    $("#result").append(JSON.stringify(data[i]) + "<br>")
+                }
+            },
+        });
+    }
+
+    function getById(){
+        // 获取输入框中的ID
+        var id = $("#userId").val();
+        if(!id) {
+            alert("请输入ID！");
+            return;
+        }
+
+        $.ajax({
+            type: "post",
+            url: "user/getUserById",  // 更改接口为按ID查询
+            data: {id: id},
+            success:function (data) {
+                $("#result").empty();
+                if ($.isEmptyObject(data)) { // 检查对象是否为空
+                    $("#result").append("未找到该用户");
+                } else {
+                    $("#result").append(JSON.stringify(data));
+                }
+
+            },
+        });
+    }
+</script>
+</body>
+</html>
