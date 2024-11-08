@@ -121,7 +121,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/refreshAccessToken", method = RequestMethod.POST)
-    public BaseEntity<MyToken> refreshAccessToken(MyToken myToken){
+    public BaseEntity<MyToken> refreshAccessToken(@RequestBody MyToken myToken){
         BaseEntity<MyToken> baseEntity = new BaseEntity<>();
         String refreshToken = myToken.getRefreshToken();
         if (refreshToken==null){

@@ -8,7 +8,7 @@ public class AppInfo implements Serializable {
     private Integer version; // 最新版本
     private String updateInfo; // 更新公告
     private String versionName; // 版本名
-    private String versionCode; // 版本代码
+    private int versionCode; // 版本代码
     private String versionUrl; // 更新地址
     private String versionContent; //
 
@@ -36,11 +36,11 @@ public class AppInfo implements Serializable {
         this.versionName = versionName;
     }
 
-    public String getVersionCode() {
+    public int getVersionCode() {
         return versionCode;
     }
 
-    public void setVersionCode(String versionCode) {
+    public void setVersionCode(int versionCode) {
         this.versionCode = versionCode;
     }
 
