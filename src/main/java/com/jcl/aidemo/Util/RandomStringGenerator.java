@@ -1,13 +1,11 @@
 package com.jcl.aidemo.Util;
 
 import com.jcl.aidemo.bean.User;
-import com.jcl.aidemo.service.user.UserService;
-import com.jcl.aidemo.service.user.UserServiceImpl;
+import com.jcl.aidemo.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.annotation.Resource;
 
 import java.util.Date;
 import java.util.Random;
