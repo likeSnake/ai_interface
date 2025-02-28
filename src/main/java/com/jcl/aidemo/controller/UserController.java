@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public int addUser(User user){
+    public int addUser(@RequestBody User user){
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();//获得当前时间
         String birthday = df.format(date);
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
-    public int updateUser(User user){
+    public int updateUser(@RequestBody User user){
         int code = userService.updateUser(user);
         return code;
     }
