@@ -1,6 +1,6 @@
 package com.jcl.aidemo.controller;
 
-import com.jcl.aidemo.bean.AppInfo;
+import com.jcl.aidemo.bean.*;
 import com.jcl.aidemo.service.AppService;
 import com.jcl.aidemo.impl.AppServiceImpl;
 import jakarta.annotation.Resource;

@@ -1,5 +1,6 @@
 package com.jcl.aidemo.impl;
 
+import com.jcl.aidemo.bean.TextTemplate;
 import com.jcl.aidemo.bean.User;
 import com.jcl.aidemo.mapper.UserMapper;
 import com.jcl.aidemo.service.UserService;
@@ -48,5 +49,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByName(String userName) {
         return userMapper.getUserByName(userName);
+    }
+    @Override
+    public List<TextTemplate> getAllTemplate() {
+        return userMapper.getTextTemplates();
     }
 }

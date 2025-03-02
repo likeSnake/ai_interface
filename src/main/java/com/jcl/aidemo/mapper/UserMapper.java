@@ -1,5 +1,6 @@
 package com.jcl.aidemo.mapper;
 
+import com.jcl.aidemo.bean.TextTemplate;
 import com.jcl.aidemo.bean.User;
 import org.apache.ibatis.annotations.*;
 
@@ -42,4 +43,7 @@ public interface UserMapper {
     //根据id查询用户
     @Select("select * from user where userName = #{userName}")
     User getUserByName(String userName);
+
+    @Select("select * from texttemplate")
+    List<TextTemplate> getTextTemplates();
 }

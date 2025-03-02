@@ -1,5 +1,6 @@
 package com.jcl.aidemo.service;
 
+import com.jcl.aidemo.bean.TextTemplate;
 import com.jcl.aidemo.bean.User;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface UserService {
     public int deleteUser(int id);
     public User loginPassword(User user);
     public User getUserByName(String userName);
+    List<TextTemplate> getAllTemplate();
+
 }

@@ -2,9 +2,7 @@ package com.jcl.aidemo.controller;
 
 
 import com.jcl.aidemo.Util.RandomStringGenerator;
-import com.jcl.aidemo.bean.BaseEntity;
-import com.jcl.aidemo.bean.MyToken;
-import com.jcl.aidemo.bean.User;
+import com.jcl.aidemo.bean.*;
 import com.jcl.aidemo.service.UserService;
 import com.jcl.aidemo.impl.UserServiceImpl;
 import io.jsonwebtoken.Claims;
@@ -142,6 +140,31 @@ public class UserController {
             baseEntity.setCode(-3);
             baseEntity.setMsg("令牌已过期");
         }
+        return baseEntity;
+    }
+
+    @RequestMapping(value = "/getAllTemplate", method = RequestMethod.GET)
+    public BaseListEntity<TextTemplate> getAllTemplate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims parseToken = RandomStringGenerator.parseToken(token);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String userName = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByName(userName);
+            if (user != null){
+                baseEntity.setCode(1);
+                baseEntity.setData(userService.getAllTemplate());
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-3);
+            baseEntity.setMsg("请先登录");
+        }
+
         return baseEntity;
     }
 }
