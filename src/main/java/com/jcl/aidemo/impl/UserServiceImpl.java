@@ -54,4 +54,24 @@ public class UserServiceImpl implements UserService {
     public List<TextTemplate> getAllTemplate() {
         return userMapper.getTextTemplates();
     }
+
+    @Override
+    public int addTemplate(TextTemplate template) {
+        return userMapper.addTemplate(template);
+    }
+
+    @Override
+    public List<TextTemplate> getTextTemplatesByUserId(String id) {
+        return userMapper.getTextTemplatesByUserId(id);
+    }
+
+    @Override
+    public boolean checkTemplateExist(int id) {
+        return userMapper.checkTemplateExist(id);
+    }
+
+    @Override
+    public int updateTemplateById(TextTemplate template) {
+        return userMapper.updateTemplateById(template);
+    }
 }

@@ -14,5 +14,9 @@ public interface UserService {
     public User loginPassword(User user);
     public User getUserByName(String userName);
     List<TextTemplate> getAllTemplate();
+    int addTemplate(TextTemplate template);
+    List<TextTemplate> getTextTemplatesByUserId(String id);
+    boolean checkTemplateExist(int id);
+    int updateTemplateById(TextTemplate template);
 
 }

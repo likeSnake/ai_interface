@@ -44,6 +44,30 @@ public interface UserMapper {
     @Select("select * from user where userName = #{userName}")
     User getUserByName(String userName);
 
-    @Select("select * from texttemplate")
+    // 查询使用次数前30位的公开模板
+    @Select("SELECT * FROM texttemplate WHERE permissionLevel = 0 ORDER BY useNumber DESC LIMIT 30")
     List<TextTemplate> getTextTemplates();
+
+    // 根据分享者ID查询模板
+    @Select("SELECT * FROM texttemplate WHERE sharerId = #{id} ORDER BY useNumber DESC")
+    List<TextTemplate> getTextTemplatesByUserId(String id);
+
+    // 添加模板
+    @Insert("insert into TextTemplate (id, title, content, prompt, sharerId, useNumber) " +
+            "values(#{id}, #{title}, #{content}, #{prompt}, #{sharerId}, #{useNumber} )")
+    int addTemplate(TextTemplate template);
+
+    // 根据ID查询模板是否已存在
+    @Select("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM texttemplate WHERE id = #{id}")
+    boolean checkTemplateExist(int id);
+
+    // 更新模板
+    @Update("UPDATE TextTemplate SET " +
+            "title = #{title}, " +
+            "content = #{content}, " +
+            "prompt = #{prompt}, " +
+            "sharerId = #{sharerId}, " +
+            "useNumber = #{useNumber} " +
+            "WHERE id = #{id}")
+    int updateTemplateById(TextTemplate template);
 }

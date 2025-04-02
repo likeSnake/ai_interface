@@ -1,6 +1,7 @@
 package com.jcl.aidemo.controller;
 
 
+import com.jcl.aidemo.Util.MyUtil;
 import com.jcl.aidemo.Util.RandomStringGenerator;
 import com.jcl.aidemo.bean.*;
 import com.jcl.aidemo.service.UserService;
@@ -13,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/user")
@@ -96,8 +98,8 @@ public class UserController {
     public BaseEntity<User> getUserInfo(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
 
         // 提取Bearer令牌
-        String token = authorizationHeader.replace("Bearer ", "");
-        Claims parseToken = RandomStringGenerator.parseToken(token);
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
         BaseEntity<User> baseEntity = new BaseEntity<>();
         if (parseToken != null) {
             String userName = parseToken.getSubject();  // 获取用户名
@@ -129,6 +131,8 @@ public class UserController {
         }
         String token = refreshToken.replace("Bearer ", "");
         Claims parseToken = RandomStringGenerator.parseRefreshToken(token);
+        /*MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(refreshToken);*/
         if (parseToken != null){
             String accessToken = RandomStringGenerator.refreshAccessToken(refreshToken, userService);
             MyToken token1 = new MyToken();
@@ -143,12 +147,13 @@ public class UserController {
         return baseEntity;
     }
 
+    // 获取所有公开的模板
     @RequestMapping(value = "/getAllTemplate", method = RequestMethod.GET)
     public BaseListEntity<TextTemplate> getAllTemplate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
 
         // 提取Bearer令牌
-        String token = authorizationHeader.replace("Bearer ", "");
-        Claims parseToken = RandomStringGenerator.parseToken(token);
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
         BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
         if (parseToken != null) {
             String userName = parseToken.getSubject();  // 获取用户名
@@ -165,6 +170,66 @@ public class UserController {
             baseEntity.setMsg("请先登录");
         }
 
+        return baseEntity;
+    }
+
+    // 获取指定用户的模板
+    @RequestMapping(value = "/getTemplateByUserId", method = RequestMethod.GET)
+    public BaseListEntity<TextTemplate> getTemplateByUserId(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String userName = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByName(userName);
+            if (user != null){
+                baseEntity.setCode(1);
+                baseEntity.setData(userService.getTextTemplatesByUserId(user.getUserName()));
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-3);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
+
+    @RequestMapping(value = "/createTemplate", method = RequestMethod.POST)
+    public BaseEntity<Integer> createTemplate(@RequestBody TextTemplate template, @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        if (parseToken == null){
+            baseEntity.setCode(-3);
+            baseEntity.setMsg("请先登录");
+        }else {
+            String userName = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByName(userName);
+            if (user != null){
+                if (template.getId() != 0){
+                    boolean ii = userService.checkTemplateExist(template.getId());
+                    if (ii){
+                        // 如果已存在就更新
+                        userService.updateTemplateById(template);
+                    }
+                }else {
+                    // 新增
+                    template.setSharerId(user.getUserName());
+                    template.setUseNumber(0);
+                    userService.addTemplate(template);
+                }
+                baseEntity.setCode(1);
+                baseEntity.setData(1);
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        }
         return baseEntity;
     }
 }
