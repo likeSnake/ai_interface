@@ -53,8 +53,8 @@ public interface UserMapper {
     List<TextTemplate> getTextTemplatesByUserId(String id);
 
     // 添加模板
-    @Insert("insert into TextTemplate (id, title, content, prompt, sharerId, useNumber) " +
-            "values(#{id}, #{title}, #{content}, #{prompt}, #{sharerId}, #{useNumber} )")
+    @Insert("insert into TextTemplate (id, title, content, prompt, sharerId, useNumber,permissionLevel) " +
+            "values(#{id}, #{title}, #{content}, #{prompt}, #{sharerId}, #{useNumber}, #{permissionLevel} )")
     int addTemplate(TextTemplate template);
 
     // 根据ID查询模板是否已存在
@@ -67,7 +67,8 @@ public interface UserMapper {
             "content = #{content}, " +
             "prompt = #{prompt}, " +
             "sharerId = #{sharerId}, " +
-            "useNumber = #{useNumber} " +
+            "useNumber = #{useNumber} ," +
+            "permissionLevel = #{permissionLevel} " +
             "WHERE id = #{id}")
     int updateTemplateById(TextTemplate template);
 }
