@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User checkByPwd(String phone, String pwd) {
+        return userMapper.checkByPwd(phone,pwd);
+    }
+
+    @Override
     public User getUserByName(String userName) {
         return userMapper.getUserByName(userName);
     }

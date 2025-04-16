@@ -12,6 +12,7 @@ public interface UserService {
     public int updateUser(User user);
     public int deleteUser(int id);
     public User loginPassword(User user);
+    public User checkByPwd(String phone,String pwd);
     public User getUserByName(String userName);
     List<TextTemplate> getAllTemplate();
     int addTemplate(TextTemplate template);

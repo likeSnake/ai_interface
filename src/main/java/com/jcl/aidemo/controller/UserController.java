@@ -55,6 +55,25 @@ public class UserController {
         return code;
     }
 
+    @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
+    public BaseEntity<Integer> updatePwd(@RequestBody SignInInfo signInInfo){
+        signInInfo.getCheckType();
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+
+        User user = userService.checkByPwd(signInInfo.getPhone(), signInInfo.getPassword());
+        if (user != null){
+            user.setPassword(signInInfo.getNewPassword());
+            int code = userService.updateUser(user);
+            baseEntity.setCode(1);
+            baseEntity.setMsg("密码修改成功");
+        }else {
+            // 原密码验证失败
+            baseEntity.setCode(2);
+            baseEntity.setMsg("原密码错误，请重新输入");
+        }
+        return baseEntity;
+    }
+
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     public int deleteUser(int id){
         int code = userService.deleteUser(id);

@@ -40,6 +40,14 @@ public interface UserMapper {
     })
     User loginPassword(User user);
 
+    @Select({
+            "select",
+            "id, userName, password, phone_number, created_at, updated_at, status",
+            "from user",
+            "where phone_number = #{phone} and password = #{pwd}"
+    })
+    User checkByPwd(String phone,String pwd);
+
     //根据id查询用户
     @Select("select * from user where userName = #{userName}")
     User getUserByName(String userName);
