@@ -19,6 +19,10 @@ public interface UserMapper {
     @Select("select * from user where id = #{id}")
     User getUserById(int id);
 
+    //根据手机号查询用户
+    @Select("select * from user where phone_number = #{phoneNumber}")
+    User getUserByPhone(String phoneNumber);
+
     //插入用户
     @Insert("insert into user (id, userName, password, phone_number, created_at, updated_at, status) " +
             "values(#{id}, #{userName}, #{password}, #{phone_number}, #{created_at}, #{updated_at}, #{status} )")
@@ -36,7 +40,7 @@ public interface UserMapper {
             "select",
             "id, userName, password, phone_number, created_at, updated_at, status",
             "from user",
-            "where userName = #{userName} and password = #{password}"
+            "where phone_number = #{phone_number} and password = #{password}"
     })
     User loginPassword(User user);
 
@@ -48,7 +52,7 @@ public interface UserMapper {
     })
     User checkByPwd(String phone,String pwd);
 
-    //根据id查询用户
+    //根据用户名查询用户
     @Select("select * from user where userName = #{userName}")
     User getUserByName(String userName);
 

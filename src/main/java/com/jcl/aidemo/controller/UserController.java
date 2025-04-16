@@ -36,17 +36,32 @@ public class UserController {
     }
 
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public int addUser(@RequestBody User user){
+    public BaseEntity<Integer> addUser(@RequestBody User user){
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();//获得当前时间
         String birthday = df.format(date);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
 
         user.setCreated_at(birthday);
         user.setUpdated_at(birthday);
         user.setStatus(0);
 
-        int code = userService.addUser(user);
-        return code;
+        User userByPhone = userService.getUserByPhone(user.getPhone_number());
+        if (userByPhone == null){
+            int code = userService.addUser(user);
+            if (code == 1){
+                baseEntity.setCode(1);
+                baseEntity.setMsg("注册成功");
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("注册失败");
+            }
+        }else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("该手机号已被注册");
+        }
+
+        return baseEntity;
     }
 
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
@@ -84,10 +99,10 @@ public class UserController {
     public BaseEntity<MyToken> loginPassword(@RequestBody User user){
         BaseEntity<MyToken> baseEntity = new BaseEntity<>();
         // 先检查用户是否存在
-        User userByName = userService.getUserByName(user.getUserName());
-        if (userByName == null){
+        User userByPhone = userService.getUserByPhone(user.getPhone_number());
+        if (userByPhone == null){
             baseEntity.setCode(2);
-            baseEntity.setMsg("用户名不存在");
+            baseEntity.setMsg("用户不存在");
             return baseEntity;
         }
 

@@ -79,4 +79,9 @@ public class UserServiceImpl implements UserService {
     public int updateTemplateById(TextTemplate template) {
         return userMapper.updateTemplateById(template);
     }
+
+    @Override
+    public User getUserByPhone(String phone_number) {
+        return userMapper.getUserByPhone(phone_number);
+    }
 }

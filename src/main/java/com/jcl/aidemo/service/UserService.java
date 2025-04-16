@@ -19,5 +19,5 @@ public interface UserService {
     List<TextTemplate> getTextTemplatesByUserId(String id);
     boolean checkTemplateExist(int id);
     int updateTemplateById(TextTemplate template);
-
+    User getUserByPhone(String phone_number);
 }
