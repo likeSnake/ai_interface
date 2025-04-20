@@ -72,6 +72,9 @@ public interface UserMapper {
     // 根据ID查询模板是否已存在
     @Select("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM texttemplate WHERE id = #{id}")
     boolean checkTemplateExist(int id);
+    // 根据模板ID查询模板
+    @Select("SELECT * FROM texttemplate WHERE id = #{id}")
+    TextTemplate getTextTemplatesById(int id);
 
     // 更新模板
     @Update("UPDATE TextTemplate SET " +
@@ -83,4 +86,35 @@ public interface UserMapper {
             "permissionLevel = #{permissionLevel} " +
             "WHERE id = #{id}")
     int updateTemplateById(TextTemplate template);
+
+    // 根据title模糊查询
+    @Select("SELECT * FROM texttemplate WHERE title LIKE CONCAT('%', #{title}, '%') ORDER BY useNumber DESC")
+    List<TextTemplate> searchTemplates(String title);
+
+    /**************收藏模板的增删改查操作***************/
+    // 查询：用户收藏的模板列表
+    @Select("SELECT t.* FROM texttemplate t " +
+            "JOIN user_template_favorite f ON t.id = f.template_id " +
+            "WHERE f.user_id = #{userId}")
+    List<TextTemplate> getTemplatesByUserId(@Param("userId") int userId);
+
+    // 查询：某模板被哪些用户收藏
+    @Select("SELECT u.* FROM user u " +
+            "JOIN user_template_favorite f ON u.id = f.user_id " +
+            "WHERE f.template_id = #{templateId}")
+    List<User> getUsersByTemplateId(@Param("templateId") int templateId);
+
+    // 插入：用户收藏模板
+    @Insert("INSERT INTO user_template_favorite (user_id, template_id) VALUES (#{userId}, #{templateId})")
+    int addFavorite(@Param("userId") int userId, @Param("templateId") int templateId);
+
+    // 删除：用户取消收藏模板
+    @Delete("DELETE FROM user_template_favorite WHERE user_id = #{userId} AND template_id = #{templateId}")
+    int removeFavorite(@Param("userId") int userId, @Param("templateId") int templateId);
+
+    // 查询是否收藏：返回数量
+    @Select("SELECT COUNT(*) FROM user_template_favorite WHERE user_id = #{userId} AND template_id = #{templateId}")
+    int isTemplateFavorited(@Param("userId") int userId, @Param("templateId") int templateId);
+
+    /***********************操作结束*******************************/
 }

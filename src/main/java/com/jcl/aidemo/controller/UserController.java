@@ -136,8 +136,8 @@ public class UserController {
         Claims parseToken = util.checkToken(authorizationHeader);
         BaseEntity<User> baseEntity = new BaseEntity<>();
         if (parseToken != null) {
-            String userName = parseToken.getSubject();  // 获取用户名
-            User user = userService.getUserByName(userName);
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
             if (user != null){
                 baseEntity.setData(user);
                 baseEntity.setCode(1);
@@ -190,8 +190,8 @@ public class UserController {
         Claims parseToken = util.checkToken(authorizationHeader);
         BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
         if (parseToken != null) {
-            String userName = parseToken.getSubject();  // 获取用户名
-            User user = userService.getUserByName(userName);
+            String userPhone = parseToken.getSubject();  // 获取用户手机号
+            User user = userService.getUserByPhone(userPhone);
             if (user != null){
                 baseEntity.setCode(1);
                 baseEntity.setData(userService.getAllTemplate());
@@ -200,7 +200,7 @@ public class UserController {
                 baseEntity.setMsg("请先登录");
             }
         } else {
-            baseEntity.setCode(-3);
+            baseEntity.setCode(-1);
             baseEntity.setMsg("请先登录");
         }
 
@@ -216,8 +216,8 @@ public class UserController {
         Claims parseToken = util.checkToken(authorizationHeader);
         BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
         if (parseToken != null) {
-            String userName = parseToken.getSubject();  // 获取用户名
-            User user = userService.getUserByName(userName);
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
             if (user != null){
                 baseEntity.setCode(1);
                 baseEntity.setData(userService.getTextTemplatesByUserId(user.getUserName()));
@@ -226,7 +226,7 @@ public class UserController {
                 baseEntity.setMsg("请先登录");
             }
         } else {
-            baseEntity.setCode(-3);
+            baseEntity.setCode(-1);
             baseEntity.setMsg("请先登录");
         }
 
@@ -239,11 +239,11 @@ public class UserController {
         Claims parseToken = util.checkToken(authorizationHeader);
         BaseEntity<Integer> baseEntity = new BaseEntity<>();
         if (parseToken == null){
-            baseEntity.setCode(-3);
+            baseEntity.setCode(-1);
             baseEntity.setMsg("请先登录");
         }else {
-            String userName = parseToken.getSubject();  // 获取用户名
-            User user = userService.getUserByName(userName);
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
             if (user != null){
                 if (template.getId() != 0){
                     boolean ii = userService.checkTemplateExist(template.getId());
@@ -264,6 +264,166 @@ public class UserController {
                 baseEntity.setMsg("请先登录");
             }
         }
+        return baseEntity;
+    }
+
+    // 模板使用次数加1
+    @RequestMapping(value = "/addTemplateCount", method = RequestMethod.POST)
+    public BaseEntity<Integer> addTemplateCount(@RequestBody String templateIDS, @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        int templateID = Integer.parseInt(templateIDS);
+        if (parseToken == null){
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }else {
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                TextTemplate textTemplatesById = userService.getTextTemplatesById(templateID);
+                if (textTemplatesById != null){
+                    textTemplatesById.setUseNumber(textTemplatesById.getUseNumber()+1);
+                    userService.updateTemplateById(textTemplatesById);
+                }
+
+                baseEntity.setCode(1);
+                baseEntity.setData(1);
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        }
+        return baseEntity;
+    }
+
+    // 搜索模板
+    @RequestMapping(value = "/searchTemplates", method = RequestMethod.POST)
+    public BaseListEntity<TextTemplate> searchTemplates(@RequestBody String title,@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String phoneNumber = parseToken.getSubject();  // 获取用户手机号
+            User user = userService.getUserByPhone(phoneNumber);
+            if (user != null){
+                baseEntity.setCode(1);
+                List<TextTemplate> textTemplates = userService.searchTemplates(title);
+                baseEntity.setData(textTemplates);
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
+
+    // 用户是否收藏该模板
+    @RequestMapping(value = "/isTemplateFavorited", method = RequestMethod.POST)
+    public BaseEntity<Integer> isTemplateFavorited(@RequestBody String templateID,@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                baseEntity.setCode(1);
+                int count = userService.isTemplateFavorited(user.getId(),Integer.parseInt(templateID));
+                if (count > 0){
+                    // 已收藏
+                    baseEntity.setData(1);
+                }else {
+                    // 未收藏
+                    baseEntity.setData(2);
+                }
+
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
+
+    // 用户增加/取消收藏模板
+    @RequestMapping(value = "/switchTemplateFavorite", method = RequestMethod.POST)
+    public BaseEntity<Integer> switchTemplateFavorite(@RequestBody String templateID,@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                baseEntity.setCode(1);
+                // 先查询是否已收藏,
+                int countFavorite = userService.isTemplateFavorited(user.getId(),Integer.parseInt(templateID));
+                if (countFavorite > 0){
+                    // 已收藏就取消收藏
+                    int i = userService.removeFavorite(user.getId(), Integer.parseInt(templateID));
+                    baseEntity.setData(2);
+                    baseEntity.setMsg("已取消收藏");
+                }else {
+                    // 未收藏就收藏
+                    int count = userService.addFavorite(user.getId(),Integer.parseInt(templateID));
+                    if (count > 0){
+                        baseEntity.setData(1);
+                    }else {
+                        baseEntity.setData(3);
+                    }
+                    baseEntity.setMsg("已收藏");
+                }
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
+
+    // 查询用户所有收藏的模板
+    @RequestMapping(value = "/getAllTemplateFavorited", method = RequestMethod.GET)
+    public BaseListEntity<TextTemplate> getAllTemplateFavorited(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                baseEntity.setCode(1);
+                List<TextTemplate> templatesByUserId = userService.getTemplatesByUserId(user.getId());
+                baseEntity.setData(templatesByUserId);
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
         return baseEntity;
     }
 }

@@ -17,8 +17,8 @@ public class RandomStringGenerator {
     // 设置密钥
     private static final String SECRET_KEY = "ocGNPIbsToOHRnYXxWGdXpMVKHDmxLzFqgxUfasYgzHfOzZmFUCIOabppYFJRfvvhZKeQBNumPWeVKUqRGXbOzHNERgavuFUtDxxvmGKpgIFXcqSzThHyuxg";
     private static final String REFRESH_SECRET_KEY = "LEjFQnVZyyHPhCOikaVBvYwDyCIvazwfJezbCUPgODoAJrZbtjvUcnsmiGGdmQutAqjQPRssDgRHptzlYMfhfkZHEhhBdwWYhfQULvOKoqVrmBxfqEFkxfqP";
-    private static final long ACCESS_TOKEN_EXPIRATION = 3600000;
-    private static final long REFRESH_TOKEN_EXPIRATION = 604800000;
+    private static final long ACCESS_TOKEN_EXPIRATION = 3600000;    // 刷新令牌一小时
+    private static final long REFRESH_TOKEN_EXPIRATION = 604800000; // 访问令牌有效期七天
 
     // 生成指定长度的随机字符串
     public static String generateRandomString(int length) {
@@ -37,7 +37,7 @@ public class RandomStringGenerator {
     // 生成访问令牌（短期有效）
     public static String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getUserName())
+                .setSubject(user.getPhone_number())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))  // 设置过期时间为1小时
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
@@ -47,9 +47,9 @@ public class RandomStringGenerator {
     // 生成刷新令牌（长期有效）
     public static String generateRefreshToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getUserName())
+                .setSubject(user.getPhone_number())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)) // 七天
                 .signWith(SignatureAlgorithm.HS512, REFRESH_SECRET_KEY)
                 .compact();
     }
@@ -62,8 +62,8 @@ public class RandomStringGenerator {
                 .parseClaimsJws(refreshToken)
                 .getBody();
 
-        String username = claims.getSubject();
-        User user = userService.getUserByName(username);
+        String userPhone = claims.getSubject();
+        User user = userService.getUserByPhone(userPhone);
 
         // 生成新的访问令牌
         return generateAccessToken(user);

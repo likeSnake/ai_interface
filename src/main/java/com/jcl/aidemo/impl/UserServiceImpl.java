@@ -84,4 +84,39 @@ public class UserServiceImpl implements UserService {
     public User getUserByPhone(String phone_number) {
         return userMapper.getUserByPhone(phone_number);
     }
+
+    @Override
+    public List<TextTemplate> searchTemplates(String title) {
+        return userMapper.searchTemplates(title);
+    }
+
+    @Override
+    public List<TextTemplate> getTemplatesByUserId(int userId) {
+        return userMapper.getTemplatesByUserId(userId);
+    }
+
+    @Override
+    public List<User> getUsersByTemplateId(int templateId) {
+        return userMapper.getUsersByTemplateId(templateId);
+    }
+
+    @Override
+    public int addFavorite(int userId, int templateId) {
+        return userMapper.addFavorite(userId,templateId);
+    }
+
+    @Override
+    public int removeFavorite(int userId, int templateId) {
+        return userMapper.removeFavorite(userId,templateId);
+    }
+
+    @Override
+    public int isTemplateFavorited(int userId, int templateId) {
+        return userMapper.isTemplateFavorited(userId,templateId);
+    }
+
+    @Override
+    public TextTemplate getTextTemplatesById(int id) {
+        return userMapper.getTextTemplatesById(id);
+    }
 }
