@@ -88,7 +88,7 @@ public interface UserMapper {
     int updateTemplateById(TextTemplate template);
 
     // 根据title模糊查询
-    @Select("SELECT * FROM texttemplate WHERE title LIKE CONCAT('%', #{title}, '%') ORDER BY useNumber DESC")
+    @Select("SELECT * FROM texttemplate WHERE title LIKE CONCAT('%', #{title}, '%') AND permissionLevel = 0 ORDER BY useNumber DESC")
     List<TextTemplate> searchTemplates(String title);
 
     /**************收藏模板的增删改查操作***************/
