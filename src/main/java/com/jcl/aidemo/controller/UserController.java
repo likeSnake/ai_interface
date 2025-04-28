@@ -45,6 +45,7 @@ public class UserController {
         user.setCreated_at(birthday);
         user.setUpdated_at(birthday);
         user.setStatus(0);
+        user.setRole(0); // 默认注册都是普通用户
 
         User userByPhone = userService.getUserByPhone(user.getPhone_number());
         if (userByPhone == null){
@@ -108,17 +109,30 @@ public class UserController {
 
         User loginUser = userService.loginPassword(user);
         if (loginUser != null){
-            // 成功登录
-            MyToken token = new MyToken();
-            String accessToken = RandomStringGenerator.generateAccessToken(loginUser);
-            String refreshToken = RandomStringGenerator.generateRefreshToken(loginUser);
-            token.setAccessToken(accessToken);
-            token.setRefreshToken(refreshToken);
+            if (loginUser.getStatus() == 1){
+                // 用户被封
+                baseEntity.setCode(2);
+                baseEntity.setMsg("你被封禁!");
+            }else {
+                // 成功登录
+                MyToken token = new MyToken();
+                String accessToken = RandomStringGenerator.generateAccessToken(loginUser);
+                String refreshToken = RandomStringGenerator.generateRefreshToken(loginUser);
+                token.setAccessToken(accessToken);
+                token.setRefreshToken(refreshToken);
 
-            baseEntity.setData(token);
-            baseEntity.setCode(1);
-            baseEntity.setMsg("登录成功");
-
+                // 判断是否为管理员
+                if (loginUser.getRole() == 1){
+                    // 管理员
+                    token.setUserRole(1);
+                }else {
+                    // 普通用户
+                    token.setUserRole(0);
+                }
+                baseEntity.setData(token);
+                baseEntity.setCode(1);
+                baseEntity.setMsg("登录成功");
+            }
         }else {
             // 登录失败
             baseEntity.setCode(2);

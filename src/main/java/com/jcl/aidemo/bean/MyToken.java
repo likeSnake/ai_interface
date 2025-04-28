@@ -9,6 +9,7 @@ public class MyToken implements Serializable {
 	private String hostURL;
 	private String unionID;
 	private int registerType;	// 0正常登录 1注册
+	private int userRole;	// 用户角色：0 普通用户，1 管理员
 
 	public String getAccessToken() {
 		return accessToken;
@@ -48,5 +49,13 @@ public class MyToken implements Serializable {
 
 	public void setRegisterType(int registerType) {
 		this.registerType = registerType;
+	}
+
+	public int getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(int userRole) {
+		this.userRole = userRole;
 	}
 }

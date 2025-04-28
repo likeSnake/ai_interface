@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String updated_at; // 用户信息最后一次更新的时间。
     private int status; // 用户状态 0正常 1封禁
     private String token; // 用户令牌
+    private int role; //  用户角色：0 普通用户，1 管理员
 
     public Integer getId() {
         return id;
@@ -76,5 +77,13 @@ public class User implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 }

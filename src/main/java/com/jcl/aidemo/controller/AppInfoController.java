@@ -16,8 +16,11 @@ public class AppInfoController {
     private AppService appService = new AppServiceImpl();
 
     @RequestMapping(value = "/getAppInfo", method = RequestMethod.GET)
-    public AppInfo getAppInfo(){
+    public BaseEntity<AppInfo> getAppInfo(){
+        BaseEntity<AppInfo> baseEntity = new BaseEntity<>();
         AppInfo appInfo = appService.getAppInfo();
-        return appInfo;
+        baseEntity.setCode(1);
+        baseEntity.setData(appInfo);
+        return baseEntity;
     }
 }

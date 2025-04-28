@@ -11,6 +11,7 @@ public class AppInfo implements Serializable {
     private int versionCode; // 版本代码
     private String versionUrl; // 更新地址
     private String versionContent; //
+    private int update_install; // 是否强制安装 0否 1是
 
     public Integer getVersion() {
         return version;
@@ -58,5 +59,13 @@ public class AppInfo implements Serializable {
 
     public void setVersionContent(String versionContent) {
         this.versionContent = versionContent;
+    }
+
+    public int getUpdate_install() {
+        return update_install;
+    }
+
+    public void setUpdate_install(int update_install) {
+        this.update_install = update_install;
     }
 }
