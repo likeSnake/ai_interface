@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<TextTemplate> getTextTemplatesByUserId(String id) {
+    public List<TextTemplate> getTextTemplatesByUserPhone(String id) {
         return userMapper.getTextTemplatesByUserId(id);
     }
 

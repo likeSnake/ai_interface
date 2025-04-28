@@ -230,11 +230,11 @@ public class UserController {
         Claims parseToken = util.checkToken(authorizationHeader);
         BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
         if (parseToken != null) {
-            String userPhone = parseToken.getSubject();  // 获取用户名
+            String userPhone = parseToken.getSubject();  // 获取手机号
             User user = userService.getUserByPhone(userPhone);
             if (user != null){
                 baseEntity.setCode(1);
-                baseEntity.setData(userService.getTextTemplatesByUserId(user.getUserName()));
+                baseEntity.setData(userService.getTextTemplatesByUserPhone(user.getPhone_number()));
             }else {
                 baseEntity.setCode(-1);
                 baseEntity.setMsg("请先登录");
@@ -267,7 +267,7 @@ public class UserController {
                     }
                 }else {
                     // 新增
-                    template.setSharerId(user.getUserName());
+                    template.setSharerId(user.getPhone_number());
                     template.setUseNumber(0);
                     userService.addTemplate(template);
                 }
