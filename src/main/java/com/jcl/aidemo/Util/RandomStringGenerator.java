@@ -8,6 +8,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -55,8 +57,9 @@ public class RandomStringGenerator {
     }
 
     // 刷新访问令牌
-    public static String refreshAccessToken(String refreshToken,UserService userService) {
+    public static Object[] refreshAccessToken(String refreshToken, UserService userService) {
         // 验证刷新令牌
+        Object[] arr = new Object[3];
         Claims claims = Jwts.parser()
                 .setSigningKey(REFRESH_SECRET_KEY)
                 .parseClaimsJws(refreshToken)
@@ -64,9 +67,11 @@ public class RandomStringGenerator {
 
         String userPhone = claims.getSubject();
         User user = userService.getUserByPhone(userPhone);
-
+        arr[0] = userPhone;
+        arr[1] = user;
+        arr[2] = generateAccessToken(user);
         // 生成新的访问令牌
-        return generateAccessToken(user);
+        return arr;
     }
 
     // 验证令牌是否过期

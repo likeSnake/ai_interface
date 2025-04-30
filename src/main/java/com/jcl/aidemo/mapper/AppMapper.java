@@ -11,9 +11,7 @@ import java.util.List;
 @Mapper
 public interface AppMapper {
     @Select({
-            "select",
-            "version, updateInfo, versionName, versionCode, versionUrl, versionContent",
-            "from appinfo"
+            "SELECT * FROM appinfo ORDER BY versionCode DESC LIMIT 1"
     })
     AppInfo getAppInfo();
 }

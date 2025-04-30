@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -153,9 +154,14 @@ public class UserController {
             String userPhone = parseToken.getSubject();  // 获取用户名
             User user = userService.getUserByPhone(userPhone);
             if (user != null){
-                baseEntity.setData(user);
-                baseEntity.setCode(1);
-                baseEntity.setMsg("登录成功");
+                if(user.getStatus() == 1){
+                    baseEntity.setCode(2);
+                    baseEntity.setMsg("你已被封禁");
+                }else {
+                    baseEntity.setData(user);
+                    baseEntity.setCode(1);
+                    baseEntity.setMsg("登录成功");
+                }
             }else {
                 baseEntity.setCode(-1);
                 baseEntity.setMsg("用户读取错误");
@@ -182,12 +188,21 @@ public class UserController {
         /*MyUtil util = new MyUtil();
         Claims parseToken = util.checkToken(refreshToken);*/
         if (parseToken != null){
-            String accessToken = RandomStringGenerator.refreshAccessToken(refreshToken, userService);
-            MyToken token1 = new MyToken();
-            token1.setRefreshToken(refreshToken);
-            token1.setAccessToken(accessToken);
-            baseEntity.setCode(1);
-            baseEntity.setData(token1);
+            Object[] objects = RandomStringGenerator.refreshAccessToken(refreshToken, userService);
+            String accessToken = (String)objects[2];
+            String userPhone = (String)objects[0];
+            User user = (User)objects[1];
+
+            if (user.getStatus() == 1){
+                baseEntity.setCode(-2);
+                baseEntity.setMsg("你已被封禁");
+            }else {
+                MyToken token1 = new MyToken();
+                token1.setRefreshToken(refreshToken);
+                token1.setAccessToken(accessToken);
+                baseEntity.setCode(1);
+                baseEntity.setData(token1);
+            }
         }else {
             baseEntity.setCode(-3);
             baseEntity.setMsg("令牌已过期");

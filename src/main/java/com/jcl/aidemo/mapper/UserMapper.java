@@ -9,9 +9,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     @Select({
-            "select",
-            "id, userName, password, phone_number, created_at, updated_at, status",
-            "from user"
+            "select * from user"
     })
     List<User> selectAllUser();
 
@@ -37,17 +35,13 @@ public interface UserMapper {
     int deleteUser(int id);
 
     @Select({
-            "select",
-            "id, userName, password, phone_number, created_at, updated_at, status",
-            "from user",
+            "select * from user",
             "where phone_number = #{phone_number} and password = #{password}"
     })
     User loginPassword(User user);
 
     @Select({
-            "select",
-            "id, userName, password, phone_number, created_at, updated_at, status",
-            "from user",
+            "select * from user",
             "where phone_number = #{phone} and password = #{pwd}"
     })
     User checkByPwd(String phone,String pwd);
