@@ -489,4 +489,71 @@ public class UserController {
 
         return baseEntity;
     }
+
+    // 管理员获取在审核中的模板模板
+    @RequestMapping(value = "/getHistoryAuditTemplate", method = RequestMethod.GET)
+    public BaseListEntity<TextTemplate> getHistoryAuditTemplate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户手机号
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                // 验证是否为管理员
+                if (user.getRole() == 1){
+                    baseEntity.setCode(1);
+                    baseEntity.setData(userService.getTemplatesByManagerId(user.getId()));
+                }else {
+                    baseEntity.setCode(-1);
+                    baseEntity.setMsg("非法用户");
+                }
+
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
+
+    // 插入管理员审核记录
+    @RequestMapping(value = "/addAuditTemplate", method = RequestMethod.POST)
+    public BaseEntity<Integer> addAuditTemplate(@RequestBody String templateID, @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户手机号
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                // 验证是否为管理员
+                if (user.getRole() == 1){
+                    // 插入操作记录
+                    baseEntity.setCode(1);
+                    baseEntity.setData(userService.addManager(user.getId(),Integer.parseInt(templateID)));
+                }else {
+                    baseEntity.setCode(-1);
+                    baseEntity.setMsg("非法用户");
+                }
+
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
 }

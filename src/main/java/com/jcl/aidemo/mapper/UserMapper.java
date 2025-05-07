@@ -53,7 +53,7 @@ public interface UserMapper {
     // 查询使用次数前30位的公开模板
     @Select("SELECT * FROM texttemplate WHERE permissionLevel = 0 ORDER BY useNumber DESC LIMIT 30")
     List<TextTemplate> getTextTemplates();
-    // 根据分享者ID查询模板
+    // 查询审核中的模板
     @Select("SELECT * FROM texttemplate WHERE permissionLevel = 2 ORDER BY useNumber DESC")
     List<TextTemplate> getAllAuditTemplate();
 
