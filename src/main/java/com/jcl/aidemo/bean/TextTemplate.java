@@ -7,7 +7,7 @@ public class TextTemplate {
     private String prompt;  // 提示词
     private String sharerId;    // 分享者id
     private int useNumber; // 使用次数
-    private int permissionLevel;    // 权限等级 0-共享 1-私有 2-封禁
+    private int permissionLevel;    // 权限等级 0-共享 1-私有 2-审核中 3-封禁
 
     public int getId() {
         return id;

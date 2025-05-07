@@ -455,4 +455,38 @@ public class UserController {
 
         return baseEntity;
     }
+
+
+    // 管理员获取在审核中的模板模板
+    @RequestMapping(value = "/getAllAuditTemplate", method = RequestMethod.GET)
+    public BaseListEntity<TextTemplate> getAllAuditTemplate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+
+        // 提取Bearer令牌
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseListEntity<TextTemplate> baseEntity = new BaseListEntity<>();
+        if (parseToken != null) {
+            String userPhone = parseToken.getSubject();  // 获取用户手机号
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                // 验证是否为管理员
+                if (user.getRole() == 1){
+                    baseEntity.setCode(1);
+                    baseEntity.setData(userService.getAllAuditTemplate());
+                }else {
+                    baseEntity.setCode(-1);
+                    baseEntity.setMsg("非法用户");
+                }
+
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        } else {
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }
+
+        return baseEntity;
+    }
 }

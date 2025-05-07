@@ -53,6 +53,9 @@ public interface UserMapper {
     // 查询使用次数前30位的公开模板
     @Select("SELECT * FROM texttemplate WHERE permissionLevel = 0 ORDER BY useNumber DESC LIMIT 30")
     List<TextTemplate> getTextTemplates();
+    // 根据分享者ID查询模板
+    @Select("SELECT * FROM texttemplate WHERE permissionLevel = 2 ORDER BY useNumber DESC")
+    List<TextTemplate> getAllAuditTemplate();
 
     // 根据分享者ID查询模板
     @Select("SELECT * FROM texttemplate WHERE sharerId = #{id} ORDER BY useNumber DESC")
@@ -110,5 +113,24 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) FROM user_template_favorite WHERE user_id = #{userId} AND template_id = #{templateId}")
     int isTemplateFavorited(@Param("userId") int userId, @Param("templateId") int templateId);
 
+    /***********************操作结束*******************************/
+
+    /**************管理员对模板表的操作***************/
+
+    // 查询：对应管理员id审核的模板
+    @Select("SELECT t.* FROM texttemplate t " +
+            "JOIN user_template_manager f ON t.id = f.template_id " +
+            "WHERE f.user_id = #{userId}")
+    List<TextTemplate> getTemplatesByManagerId(@Param("userId") int userId);
+
+    // 插入：管理员审核记录
+    @Insert("INSERT INTO user_template_manager (user_id, template_id) VALUES (#{userId}, #{templateId})")
+    int addManager(@Param("userId") int userId, @Param("templateId") int templateId);
+
+    // 查询：某模板被哪些管理员操作过
+    @Select("SELECT u.* FROM user u " +
+            "JOIN user_template_manager f ON u.id = f.user_id " +
+            "WHERE f.template_id = #{templateId}")
+    List<User> getAdministratorByTemplateId(@Param("templateId") int templateId);
     /***********************操作结束*******************************/
 }

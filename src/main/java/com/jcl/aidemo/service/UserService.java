@@ -16,6 +16,7 @@ public interface UserService {
     public User checkByPwd(String phone,String pwd);
     public User getUserByName(String userName);
     List<TextTemplate> getAllTemplate();
+    List<TextTemplate> getAllAuditTemplate();
     int addTemplate(TextTemplate template);
     List<TextTemplate> getTextTemplatesByUserPhone(String id);
     boolean checkTemplateExist(int id);
@@ -28,4 +29,7 @@ public interface UserService {
     int removeFavorite(@Param("userId") int userId, @Param("templateId") int templateId);
     int isTemplateFavorited(@Param("userId") int userId, @Param("templateId") int templateId);
     TextTemplate getTextTemplatesById(int id);
+    List<TextTemplate> getTemplatesByManagerId(@Param("userId") int userId);
+    int addManager(@Param("userId") int userId, @Param("templateId") int templateId);
+    List<User> getAdministratorByTemplateId(@Param("templateId") int templateId);
 }

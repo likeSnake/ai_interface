@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<TextTemplate> getAllAuditTemplate() {
+        return userMapper.getAllAuditTemplate();
+    }
+
+    @Override
     public int addTemplate(TextTemplate template) {
         return userMapper.addTemplate(template);
     }
@@ -118,5 +123,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public TextTemplate getTextTemplatesById(int id) {
         return userMapper.getTextTemplatesById(id);
+    }
+
+    @Override
+    public List<TextTemplate> getTemplatesByManagerId(int userId) {
+        return userMapper.getTemplatesByManagerId(userId);
+    }
+
+    @Override
+    public int addManager(int userId, int templateId) {
+        return userMapper.addManager(userId,templateId);
+    }
+
+    @Override
+    public List<User> getAdministratorByTemplateId(int templateId) {
+        return userMapper.getAdministratorByTemplateId(templateId);
     }
 }
