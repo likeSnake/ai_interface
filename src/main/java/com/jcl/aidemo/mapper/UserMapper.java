@@ -22,8 +22,8 @@ public interface UserMapper {
     User getUserByPhone(String phoneNumber);
 
     //插入用户
-    @Insert("insert into user (id, userName, password, phone_number, created_at, updated_at, status) " +
-            "values(#{id}, #{userName}, #{password}, #{phone_number}, #{created_at}, #{updated_at}, #{status} )")
+    @Insert("insert into user (id, userName, password, phone_number, created_at, updated_at, status,role) " +
+            "values(#{id}, #{userName}, #{password}, #{phone_number}, #{created_at}, #{updated_at}, #{status}, #{role} )")
     int addUser(User user);
 
     //更新用户
