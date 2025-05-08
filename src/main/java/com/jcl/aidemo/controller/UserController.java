@@ -556,4 +556,52 @@ public class UserController {
 
         return baseEntity;
     }
+
+    // 管理员审核模板
+    @RequestMapping(value = "/auditTemplate", method = RequestMethod.POST)
+    public BaseEntity<Integer> auditTemplate(@RequestBody TextTemplate template, @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+        MyUtil util = new MyUtil();
+        Claims parseToken = util.checkToken(authorizationHeader);
+        BaseEntity<Integer> baseEntity = new BaseEntity<>();
+        if (parseToken == null){
+            baseEntity.setCode(-1);
+            baseEntity.setMsg("请先登录");
+        }else {
+            String userPhone = parseToken.getSubject();  // 获取用户名
+            User user = userService.getUserByPhone(userPhone);
+            if (user != null){
+                // 验证是否为管理员
+                if (user.getRole() == 1){
+                    if (template.getId() != 0){
+                        boolean ii = userService.checkTemplateExist(template.getId());
+                        if (ii){
+                            // 如果已存在就更新
+                            userService.updateTemplateById(template);
+                            baseEntity.setCode(1);
+                            baseEntity.setData(1);
+                            baseEntity.setMsg("已审核");
+
+                            // 审核完插入操作记录
+                            baseEntity.setCode(1);
+                            baseEntity.setData(userService.addManager(user.getId(),template.getId()));
+                        }else {
+                            baseEntity.setCode(-1);
+                            baseEntity.setMsg("非法用户");
+                        }
+                    }else {
+                        // 模板不存在
+                        baseEntity.setCode(0);
+                        baseEntity.setData(0);
+                        baseEntity.setMsg("模板不存在");
+                    }
+
+                }
+
+            }else {
+                baseEntity.setCode(-1);
+                baseEntity.setMsg("请先登录");
+            }
+        }
+        return baseEntity;
+    }
 }
